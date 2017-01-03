@@ -1,0 +1,40 @@
+.footnote-wrapper {
+  display: none;
+  position: absolute;
+  z-index: 999;
+  max-width: 60%;
+  text-align: left;
+  opacity: 0;
+  transition: opacity 300ms ease-out, margin-top 250ms ease;
+  margin-top: -10px; }
+  .footnote-wrapper.active {
+    display: block; }
+  .footnote-wrapper.visible {
+    opacity: 1;
+    margin-top: 0; }
+  .footnote-wrapper .content {
+    position: relative;
+    top: 12.5px;
+    z-index: 999;
+    background-color: "#ff0";
+    padding: 20px;
+    min-width: 200px;
+    font-size: .8em; }
+  .footnote-wrapper .tip {
+    position: absolute;
+    left: 50%;
+    top: 5px;
+    margin-left: 7.5px;
+    transform: rotate(45deg);
+    width: 15px;
+    height: 15px;
+    background-color: #000;
+    z-index: 998; }
+
+p {
+  position: relative; }
+
+a[rel=footnote] {
+  border-color: "#ff0"; }
+
+/*# sourceMappingURL=bibcite.css.map */

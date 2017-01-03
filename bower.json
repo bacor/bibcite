@@ -1,0 +1,26 @@
+{
+  "name": "bibcite",
+  "homepage": "https://github.com/bacor/bibcite",
+  "authors": [
+    "bacor <bjmcornelissen@gmail.com>"
+  ],
+  "description": "BibTeX citations in the browser",
+  "main": "dist/bibcite.js",
+  "keywords": [
+    "bibtex",
+    "citations",
+    "footnotes"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "_site"
+  ],
+  "dependencies": {
+    "jQuery": "^3.1.1"
+  }
+}

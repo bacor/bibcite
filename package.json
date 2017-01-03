@@ -1,0 +1,25 @@
+{
+  "name": "bibcite",
+  "version": "1.0.0",
+  "description": "JS based BibTex citations",
+  "main": "src/bibcite.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bacor/bibcite.git"
+  },
+  "author": "bjmcornelissen@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bacor/bibcite/issues"
+  },
+  "homepage": "https://github.com/bacor/bibcite#readme",
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-sass": "^1.0.0",
+    "grunt-contrib-uglify": "^2.0.0"
+  }
+}
