@@ -2,6 +2,10 @@
 
 BibCite let's you cite from your BibTeX files using a markdown-like syntax. It depends on jQuery and Underscore.js. 
 
+## [Demo](https://bacor.github.io/bibcite)
+
+------------------------
+
 ### Citation styles
 It currently supports only one citatation style (roughly, APA), but it is fairly straightforward to create new ones.
 
