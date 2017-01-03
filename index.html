@@ -1,0 +1,29 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>BibCite</title>
+    <link rel="stylesheet" href="dist/bibcite.css">
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/underscore/underscore-min.js"></script>
+    <script src="dist/bibcite.js"></script>
+
+    <!-- For demo purposes only -->
+    <link href="https://fonts.googleapis.com/css?family=Crimson+Text" rel="stylesheet">
+    <link rel="stylesheet" href="demo/demo.css">
+
+  </head>
+  <body>
+    <main>
+      {% capture myInclude %}{% include_relative readme.md %}{% endcapture %}
+      {{ myInclude | markdownify }}
+
+    </main>
+    <script>
+      B = new BibCite('/demo/demo-bib.bib')
+    </script>
+  </body>
+</html>
+

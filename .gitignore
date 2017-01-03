@@ -4,4 +4,4 @@ Gemfile.lock
 .DS_Store
 bower_components/
 node_modules/
-docs/_site/
+_site/

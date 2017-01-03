@@ -1,37 +1,42 @@
-## Welcome to GitHub Pages
+## BibCite
 
-You can use the [editor on GitHub](https://github.com/bacor/bibcite/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+BibCite let's you cite from your BibTeX files using a markdown-like syntax. It depends on jQuery and (still) on underscore.js.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+### JS
+Load the dependencies and you're good to go:
+{% highlight html %}
+<script src="jquery.min.js"></script>
+<script src="underscore-min.js"></script>
+<script src="bibcite.min.js"></script>
+<script>
+//..
+</script>
+{% endhighlight %}
 
 ### Markdown
+{% highlight md %}
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+Suspendisse imperdiet eleifend ornare @(Descartes2006). 
+Proin pharetra sodales lectus, a sollicitudin lorem 
+sodales eget. @Descartes2006 fusce eget nunc lorem. 
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+Aenean semper sapien gravida blandit ullamcorper. Duis 
+pellentesque metus sit amet gravida posuere. Nullam 
+volutpat @^Descartes2016 malesuada erat, sed consectetur.
 
-```markdown
-Syntax highlighted code block
+@@Descartes2016
+{% endhighlight %}
 
-# Header 1
-## Header 2
-### Header 3
+### Result
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+Suspendisse imperdiet eleifend ornare @(Descartes2006). 
+Proin pharetra sodales lectus, a sollicitudin lorem 
+sodales eget. @Descartes2006 fusce eget nunc lorem. 
 
-- Bulleted
-- List
+Aenean semper sapien gravida blandit ullamcorper. Duis 
+pellentesque metus sit amet gravida posuere. Nullam 
+volutpat @^Descartes2016 malesuada erat, sed consectetur.
 
-1. Numbered
-2. List
+@@Descartes2016
 
-**Bold** and _Italic_ and `Code` text
 
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/bacor/bibcite/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
