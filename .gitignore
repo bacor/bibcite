@@ -1,0 +1,6 @@
+.bundle
+.sass-cache
+Gemfile.lock
+.DS_Store
+bower_components/
+docs/_site/
