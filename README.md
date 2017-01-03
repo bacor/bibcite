@@ -12,10 +12,10 @@ It currently supports only one citatation style (roughly, APA), but it is fairly
 ### Citation modes
 There are four different citation modes:
 
-1. `citep` Parentesized, e.g. (Descartes, 2006)
-2. `citet` In running text, e.g. Johnson et al. (1982)
-3. `footcite` Full reference in a footnote
-4. `reference` Full reference
+1. `@(Descartes2006)` Parentesized, e.g. (Descartes, 2006)
+2. `@Johnson1982` In running text, e.g. Johnson et al. (1982)
+3. `@^Descartes2006` Full reference in a footnote
+4. `@@Descartes2006` Full reference
 
 ### To do
 - Generate footnote html
