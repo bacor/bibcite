@@ -1,11 +1,2 @@
 # Setup
-theme: jekyll-theme-cayman
 highlighter: rouge
-
-title:        BibCite
-tagline:      Interactive BibTeX citations on the web
-baseurl:      ""
-
-author:
-  name:       Bas Cornelissen
-  url:        http://bascornelissen.nl
