@@ -1,42 +1,18 @@
 ## BibCite
 
-BibCite let's you cite from your BibTeX files using a markdown-like syntax. It depends on jQuery and (still) on underscore.js.
+BibCite let's you cite from your BibTeX files using a markdown-like syntax. It depends on jQuery and Underscore.js. 
 
-### JS
-Load the dependencies and you're good to go:
-{% highlight html %}
-<script src="jquery.min.js"></script>
-<script src="underscore-min.js"></script>
-<script src="bibcite.min.js"></script>
-<script>
-//..
-</script>
-{% endhighlight %}
+### Citation styles
+It currently supports only one citatation style (roughly, APA), but it is fairly straightforward to create new ones.
 
-### Markdown
-{% highlight md %}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-Suspendisse imperdiet eleifend ornare @(Descartes2006). 
-Proin pharetra sodales lectus, a sollicitudin lorem 
-sodales eget. @Descartes2006 fusce eget nunc lorem. 
+### Citation modes
+There are four different citation modes:
 
-Aenean semper sapien gravida blandit ullamcorper. Duis 
-pellentesque metus sit amet gravida posuere. Nullam 
-volutpat @^Descartes2016 malesuada erat, sed consectetur.
+1. `citep` Parentesized, e.g. (Descartes, 2006)
+2. `citet` In running text, e.g. Johnson et al. (1982)
+3. `footcite` Full reference in a footnote
+4. `reference` Full reference
 
-@@Descartes2016
-{% endhighlight %}
-
-### Result
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-Suspendisse imperdiet eleifend ornare @(Descartes2006). 
-Proin pharetra sodales lectus, a sollicitudin lorem 
-sodales eget. @Descartes2006 fusce eget nunc lorem. 
-
-Aenean semper sapien gravida blandit ullamcorper. Duis 
-pellentesque metus sit amet gravida posuere. Nullam 
-volutpat @^Descartes2016 malesuada erat, sed consectetur.
-
-@@Descartes2016
-
-
+### To do
+- Generate footnote html
+- ...
