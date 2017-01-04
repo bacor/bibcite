@@ -21,7 +21,10 @@
     "Gruntfile.js",
     "src",
     "index.md",
-    "_config.yml"
+    "_config.yml",
+    "demo",
+    "dist/jquery.min.js",
+    "dist/underscore.min.js"
   ],
   "dependencies": {
     "jQuery": "^3.1.1",
