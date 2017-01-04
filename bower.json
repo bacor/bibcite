@@ -16,9 +16,12 @@
     "**/.*",
     "node_modules",
     "bower_components",
-    "test",
-    "tests",
-    "_site"
+    "_site",
+    "_layouts",
+    "Gruntfile.js",
+    "src",
+    "index.md",
+    "_config.yml"
   ],
   "dependencies": {
     "jQuery": "^3.1.1",
