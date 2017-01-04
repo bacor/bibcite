@@ -285,7 +285,9 @@ var CitationStyle = function(options) {
 	var fields = 'address annote author booktitle chapter crossref '
 		+ 'edition editor howpublished institution journal key month note '
 		+ 'number organization pages publisher school series title type '
-		+ 'volume year';
+		+ 'volume year '
+		// And some more (from Mendeley?)
+		+ 'url arxivid archiveprefix abstract entrytype';
 	this.fields = fields.split(' ');
 
 	// Valid entry types (unused)
@@ -297,7 +299,9 @@ var CitationStyle = function(options) {
 
 CitationStyle.prototype.templates = {
   fullArticle: _.template('<%= author %> (<%= year %>). '
-                    +'<%= title %><%= title ? "." : "" %> '
+  	  				+'<%= url ? "<a href=\'" + url + "\' target=\'_blank\'>" : "" %>'
+                    	+'<%= title %><%= title ? "." : "" %> '
+                    +'<%= url ? "</a>" : "" %>'
                     +'<em><%= journal %></em><%= journal ? "." : "" %> '
                     +'<%= volume %><% if (number) { %><em>(<%= number %>)</em><% } %>'
                     +'<%= (pages && volume ) ? ": " : "" %><%= pages %><%= pages ? "." : "" %>'),
@@ -428,7 +432,7 @@ CitationStyle.prototype.render = function(template, citation, options) {
 		options.before = '';
 		options.after = '';
 	}
-
+	console.log(citation)
 	// Optionally (but by default) render footnote template
 	if( options.includeFootnote) {
 
@@ -549,8 +553,6 @@ CitationStyle.prototype.fullcite = function(citation, options) {
                 refWidth = self.width()
                 refLeft = beginPos.left
             }
-
-            console.log(refLeft, refWidth)
 
             // Position content of tooltip
             var totalWidth = $(outerContainer).width(),
@@ -850,6 +852,8 @@ Citation.prototype.get = function(property) {
         return this[property]
     } else if (property.toUpperCase() in this.bib) {
         return this.bib[property.toUpperCase()]
+    } else if (property in this.bib) {
+        return this.bib[property]
     } else {
         return false
     }

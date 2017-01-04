@@ -78,8 +78,6 @@
                 refLeft = beginPos.left
             }
 
-            console.log(refLeft, refWidth)
-
             // Position content of tooltip
             var totalWidth = $(outerContainer).width(),
                 contentWidth = self.$footnote.width();

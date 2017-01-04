@@ -257,6 +257,8 @@ Citation.prototype.get = function(property) {
         return this[property]
     } else if (property.toUpperCase() in this.bib) {
         return this.bib[property.toUpperCase()]
+    } else if (property in this.bib) {
+        return this.bib[property]
     } else {
         return false
     }
