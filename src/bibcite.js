@@ -59,9 +59,6 @@ var BibCite = function(bibfile, options) {
         },
         async: false // to be improved!
     });
-    // console.log('demo', this.cite('Descartes2006'))
-    // console.log('demo', this.cite({}))
-    // console.log('demo', this.cite('Descartes20061'))
 }
 
 BibCite.prototype.replace = function() {
@@ -87,11 +84,9 @@ BibCite.prototype.replaceCitation = function(citation) {
 
     var self = this;
     var expr = new RegExp('(@{1,2})(.)?' + citation.get('key') + '\\)?((\\{[^\\{]*\\})*)', 'gi')
-    console.log(expr, matches)
     $.each(matches, function() {
       var html = $(this).html();
       var newHtml = html.replace(expr, function(match, at, type, beforeAfter,C,D,E){
-        console.log(match)
         var type = '' || type, 
             mode = self.options.defaultMode,
             options = {};

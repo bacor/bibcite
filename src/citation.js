@@ -140,7 +140,7 @@ CitationStyle.prototype.export = function(citation, context) {
 	return obj
 }
 
-CitationStyle.prototype.render = function(template, citation, options) {
+CitationStyle.prototype.render = function(template, context, citation, options) {
 	var options = _.defaults(options || {}, this.options),
 		obj = options;
 	
