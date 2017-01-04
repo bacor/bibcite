@@ -21,7 +21,7 @@ bower install bacor/bibcite
 ```
 
 ```markdown
-Parentized citations are very common @(Lazaridou2016).
+Parenthesized citations are very common @(Lazaridou2016).
 You can add a tooltip showing the full reference just
 as easily @@(Lazaridou2016). Alternatively, cite in the
 running text, just like @@Descartes2006. If you prefer

@@ -22,7 +22,7 @@ Load the dependencies and you're good to go:
 
 ### Markdown
 {% highlight md %}
-Parentized citations are very common @(Lazaridou2016).
+Parenthesized citations are very common @(Lazaridou2016).
 You can add a tooltip showing the full reference just
 as easily @@(Lazaridou2016). Alternatively, cite in the
 running text, just like @@Descartes2006. If you prefer
@@ -36,7 +36,7 @@ full reference: @@Lazaridou2016
 
 ### Result
 
-Parentized citations are very common @(Lazaridou2016).
+Parenthesized citations are very common @(Lazaridou2016).
 You can add a tooltip showing the full reference just
 as easily @@(Lazaridou2016). Alternatively, cite in the
 running text, just like @@Descartes2006. If you prefer
@@ -57,7 +57,7 @@ The citation syntax follows the general pattern **`[@ or @@][mode][citation key]
 | Syntax   | Meaning                 | Example          | Method     |
 |----------|-------------------------|------------------|------------|
 | `@key`   | Default inline citation | @Descartes2006   | `citet`    |
-| `@(key)` | Bracketed citation      | @(Descartes2006) | `citep`    |
+| `@(key)` | Parenthesized citation  | @(Descartes2006) | `citep`    |
 | `@^key`  | Footnote citation       | @^Descartes2006  | `footcite` |
 | `@*key`  | Full reference          | @*Descartes2006  | `fullcite` |
 | `@!key`  | Show in references only | @!Descartes2006  | `nocite`   |
