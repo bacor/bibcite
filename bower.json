@@ -24,7 +24,8 @@
     "_config.yml",
     "demo",
     "dist/jquery.min.js",
-    "dist/underscore-min.js"
+    "dist/underscore-min.js",
+    "footnotes.md"
   ],
   "dependencies": {
     "jQuery": "^3.1.1",

@@ -64,14 +64,15 @@ var BibCite = function(bibfile, options) {
         },
         async: false // to be improved!
     });
+    return this;
 }
 
 BibCite.prototype.replace = function() {
     for(key in this.bibliography) {
         this.replaceCitation(this.bibliography[key])
     }
-
-    this.updateTooltips()
+    this.footnotify();
+    return this;
 }
 
 BibCite.prototype.replaceCitation = function(citation) {
@@ -110,7 +111,7 @@ BibCite.prototype.replaceCitation = function(citation) {
         // Determine citation mode
         if(type == '(') { mode = 'p' }
         else if(type == '^') { mode = 'foot'; options.includeFootnote=true } 
-        else if(type == '*') { mode = 'full' }
+        else if(type == '*') { mode = 'full'; options.includeFootnote=false }
         else if(type == '!') { mode = 'no' }
 
         // Get citation html
@@ -210,10 +211,9 @@ BibCite.prototype.nocite = function(citation, options) {
     citation.cite(false);
 }
 
-BibCite.prototype.updateTooltips = function() {
-    $("a[rel='footnote']").map(function(i, el) {
-        $(el).footnotify();
-    });
+BibCite.prototype.footnotify = function() {
+    $('a[rel="note"], a[href^="#fn"], a[class="footnote"]').footnotify();
+    return this
 }
 
 BibCite.prototype.references = function(container) {

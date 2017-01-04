@@ -26,24 +26,27 @@ Parenthesized citations are very common @(Lazaridou2016).
 You can add a tooltip showing the full reference just
 as easily @@(Lazaridou2016). Alternatively, cite in the
 running text, just like @@Descartes2006. If you prefer
-footnotes @^Lazaridou2016 that is also fine. Or cite
+footnotes @^Lazaridou2016 that is also fine.[^fn1] Or cite
 without showing the reference @!Banerjee2015; or get the
 full reference: @@Lazaridou2016
+
+[^fn1]: `BibCite` works nicely with footnotes in Jekyll
 
 # References
 <div class="bibliography"></div>
 {% endhighlight %}
 
 ### Result
-
 Parenthesized citations are very common @(Lazaridou2016).
 You can add a tooltip showing the full reference just
 as easily @@(Lazaridou2016). Alternatively, cite in the
 running text, just like @@Descartes2006. If you prefer
-footnotes @^Lazaridou2016 that is also fine. Or cite
+footnotes @^Lazaridou2016 that is also fine.[^fn1] Or cite
 without showing the reference @!Banerjee2015; or get the
 full reference: @@Lazaridou2016
 {: .result}
+
+[^fn1]: `BibCite` works nicely with footnotes in Jekyll
 
 <p class="ref-title">References</p>
 <div class="bibliography"></div>
@@ -86,5 +89,5 @@ The `BibCite` object takes various options. These are always passed along intern
 - @@(Banerjee2015){}{After}
 - @@(Banerjee2015){Before}{after} @@(Banerjee2015){before}
 - Footnotes are always interactive: @^Banerjee2015 @@^Banerjee2015
-- And you can include messages there: @^Banerjee2015{Look this is [a link](http://example.com) and another citation @Banerjee2015.}{And an afterthough}
+- And you can include messages there: @^Banerjee2015{Look this is [a link](http://example.com).}{And an afterthough}
 - @@*Banerjee2015

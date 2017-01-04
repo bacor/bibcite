@@ -674,21 +674,21 @@ img {
 ::selection {
   background: #fff09b; }
 
-.bibcite-footnote-wrapper .content {
+aside.fn-note .content {
   background-color: #fff09b;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
   font-size: .9em;
   line-height: 1.2; }
-  .bibcite-footnote-wrapper .content p {
+  aside.fn-note .content p {
     margin-top: 0;
     text-align: left; }
-  .bibcite-footnote-wrapper .content p:last-of-type {
+  aside.fn-note .content p:last-of-type {
     margin-bottom: 0; }
-.bibcite-footnote-wrapper a:hover {
+aside.fn-note a:hover {
   border-color: #ed6751;
   background-color: transparent; }
 
-a[rel="footnote"] {
+a[rel="note"] {
   border-bottom-style: dotted;
   border-color: rgba(0, 0, 0, 0.5); }
 

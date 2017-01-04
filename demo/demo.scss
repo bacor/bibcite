@@ -164,7 +164,7 @@ img {
 }
 
 
-.bibcite-footnote-wrapper {
+aside.fn-note {
     .content {
         background-color: $yellow;
         box-shadow: 0 0 5px rgba(0,0,0,0.1);
@@ -187,7 +187,7 @@ img {
     }
 }
 
-a[rel="footnote"] {
+a[rel="note"] {
     border-bottom-style: dotted;
     border-color: rgba(0,0,0,0.5);
 }

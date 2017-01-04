@@ -1,4 +1,4 @@
-.bibcite-footnote-wrapper {
+aside.fn-note {
   display: none;
   position: absolute;
   z-index: 999;
@@ -7,12 +7,12 @@
   opacity: 0;
   transition: opacity 300ms ease-out, margin-top 250ms ease;
   margin-top: -10px; }
-  .bibcite-footnote-wrapper.active {
+  aside.fn-note.active {
     display: block; }
-  .bibcite-footnote-wrapper.visible {
+  aside.fn-note.visible {
     opacity: 1;
     margin-top: 0; }
-  .bibcite-footnote-wrapper .content {
+  aside.fn-note .content {
     position: relative;
     top: 12.5px;
     z-index: 999;
@@ -20,7 +20,7 @@
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
     padding: .75em 1em;
     min-width: 200px; }
-  .bibcite-footnote-wrapper .tip {
+  aside.fn-note .tip {
     position: absolute;
     left: 50%;
     top: 5px;

@@ -8,7 +8,7 @@ var CitationStyle = function(options) {
 		includeFootnote: false,
 		plain: true,
 		showAllAuthorsEvery: 3,
-		footnoteIdTemplate: 'bibcite-<%= footnoteNo %>'
+		footnoteIdTemplate: 'bibcite-<%= footnoteNo %>' // will be replaced by footnotify
 	})
 	this.options.footnoteIdTemplate = _.template(this.options.footnoteIdTemplate)
 
@@ -51,10 +51,10 @@ CitationStyle.prototype.templates = {
                     +'<%= after ? " " : "" %><%= after %>)'),
   
   citep: _.template('(<%= before %><%= before ? " " : "" %>'
-                    +'<a href="#<%= footnoteId %>" rel="footnote"><%= author %>, <%= year %></a>'
+                    +'<a href="#<%= footnoteId %>" rel="note"><%= author %>, <%= year %></a>'
                     +'<%= after ? " " : "" %><%= after %>)'),
   
-  citet: _.template('<a href="#<%= footnoteId %>" rel="footnote"><%= author %> '
+  citet: _.template('<a href="#<%= footnoteId %>" rel="note"><%= author %> '
                     +'(<%= before %><%= before ? " " : "" %><%= year %>'
                     +'<%= after ? " " : "" %><%= after %>)</a>'),
 
@@ -62,18 +62,15 @@ CitationStyle.prototype.templates = {
                     +'(<%= before %><%= before ? " " : "" %><%= year %>'
                     +'<%= after ? " " : "" %><%= after %>)'),
 
-  footcite: _.template('<sup class="footnote">'
-						+'<a href="#<%= footnoteId %>" rel="footnote"><%= footnote %></a>'
+  footcite: _.template('<sup class="note">'
+						+'<a href="#<%= footnoteId %>" rel="note"><%= footnote %></a>'
 					  +'</sup>'),
 
-  footnote: _.template(  '<div id="<%= footnoteId %>" class="bibcite-footnote-wrapper">'
-  							+ '<div class="tip"></div>'
-  							+ '<div class="content">'
-	  							+ '<%= before ? "<p>" : ""%><%= before %><%= before ? "</p>" : ""%>'
-	  							+ '<p><%= content %></p>'
-	  							+ '<%= after ? "<p>" : ""%><%= after %><%= after ? "</p>" : ""%>'
-	  						+ '</div>'
-  						+'</div>') 
+  footnote: _.template(  '<div id="<%= footnoteId %>">'
+							+ '<%= before ? "<p>" : ""%><%= before %><%= before ? "</p>" : ""%>'
+  							+ '<p><%= content %></p>'
+  							+ '<%= after ? "<p>" : ""%><%= after %><%= after ? "</p>" : ""%>'
+	  					+'</div>') 
 }
 
 CitationStyle.prototype.formatAuthors = function(citation, all, initials) {
@@ -167,7 +164,7 @@ CitationStyle.prototype.render = function(template, citation, options) {
 		options.before = '';
 		options.after = '';
 	}
-	console.log(citation)
+
 	// Optionally (but by default) render footnote template
 	if( options.includeFootnote) {
 

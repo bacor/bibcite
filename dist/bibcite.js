@@ -273,7 +273,7 @@ var CitationStyle = function(options) {
 		includeFootnote: false,
 		plain: true,
 		showAllAuthorsEvery: 3,
-		footnoteIdTemplate: 'bibcite-<%= footnoteNo %>'
+		footnoteIdTemplate: 'bibcite-<%= footnoteNo %>' // will be replaced by footnotify
 	})
 	this.options.footnoteIdTemplate = _.template(this.options.footnoteIdTemplate)
 
@@ -316,10 +316,10 @@ CitationStyle.prototype.templates = {
                     +'<%= after ? " " : "" %><%= after %>)'),
   
   citep: _.template('(<%= before %><%= before ? " " : "" %>'
-                    +'<a href="#<%= footnoteId %>" rel="footnote"><%= author %>, <%= year %></a>'
+                    +'<a href="#<%= footnoteId %>" rel="note"><%= author %>, <%= year %></a>'
                     +'<%= after ? " " : "" %><%= after %>)'),
   
-  citet: _.template('<a href="#<%= footnoteId %>" rel="footnote"><%= author %> '
+  citet: _.template('<a href="#<%= footnoteId %>" rel="note"><%= author %> '
                     +'(<%= before %><%= before ? " " : "" %><%= year %>'
                     +'<%= after ? " " : "" %><%= after %>)</a>'),
 
@@ -327,18 +327,15 @@ CitationStyle.prototype.templates = {
                     +'(<%= before %><%= before ? " " : "" %><%= year %>'
                     +'<%= after ? " " : "" %><%= after %>)'),
 
-  footcite: _.template('<sup class="footnote">'
-						+'<a href="#<%= footnoteId %>" rel="footnote"><%= footnote %></a>'
+  footcite: _.template('<sup class="note">'
+						+'<a href="#<%= footnoteId %>" rel="note"><%= footnote %></a>'
 					  +'</sup>'),
 
-  footnote: _.template(  '<div id="<%= footnoteId %>" class="bibcite-footnote-wrapper">'
-  							+ '<div class="tip"></div>'
-  							+ '<div class="content">'
-	  							+ '<%= before ? "<p>" : ""%><%= before %><%= before ? "</p>" : ""%>'
-	  							+ '<p><%= content %></p>'
-	  							+ '<%= after ? "<p>" : ""%><%= after %><%= after ? "</p>" : ""%>'
-	  						+ '</div>'
-  						+'</div>') 
+  footnote: _.template(  '<div id="<%= footnoteId %>">'
+							+ '<%= before ? "<p>" : ""%><%= before %><%= before ? "</p>" : ""%>'
+  							+ '<p><%= content %></p>'
+  							+ '<%= after ? "<p>" : ""%><%= after %><%= after ? "</p>" : ""%>'
+	  					+'</div>') 
 }
 
 CitationStyle.prototype.formatAuthors = function(citation, all, initials) {
@@ -432,7 +429,7 @@ CitationStyle.prototype.render = function(template, citation, options) {
 		options.before = '';
 		options.after = '';
 	}
-	console.log(citation)
+
 	// Optionally (but by default) render footnote template
 	if( options.includeFootnote) {
 
@@ -477,12 +474,17 @@ CitationStyle.prototype.fullcite = function(citation, options) {
 
 (function($) {
 
-	var fnWrapperClass = 'bibcite-footnote-wrapper';
-	var fnClass = 'bibcite-footnote';
+    // Settings and variables
+	var indWrapperClass = 'fn-indicator-wrapper',
+        indClass = 'fn-indicator',
+        noteClass = 'fn-note';
+	var fnClass = 'footnotify-note';
 	var outerContainer = 'main';
+    var fnCounter = 0;
+    var indLabel = 1; // Indicator label
 
-	var hideActiveFootnotes = function() {
-        $('.' + fnWrapperClass + '.active').each(function() {
+	var hideActiveNotes = function() {
+        $('.' + noteClass + '.active').each(function() {
             var $this = $(this);
             $this.removeClass('visible')
             $this.data('timeout', setTimeout(function() {
@@ -494,103 +496,151 @@ CitationStyle.prototype.fullcite = function(citation, options) {
     // Hide active footnotes if you click outside them
     $(window).on('click', function(e){
 		var $target = $(e.target);
-		var hitFootnote = $target.parents('.' + fnWrapperClass).length > 0;
-		var hitRef = $target.hasClass(fnClass) || 
-						($target.parents('.'+fnWrapperClass).length > 0);
+		var hitFootnote = $target.parents('.' + noteClass).length > 0;
+		var hitRef = $target.hasClass(indClass) || 
+						($target.parents('.' + noteClass).length > 0);
 		if(!hitFootnote && !hitRef) {
-			hideActiveFootnotes()
+			hideActiveNotes()
 		}
 	})
 
 
     $.fn.footnotify = function() {
-    	var self = this
-    	self.addClass(fnClass);
-        
-        this.findFootnote = function() {
-        	return $(self.attr('href'))
-        }
+        $(this).each(function() {
+            if(!$(this).attr('data-note')) {
 
-        this.isActive = function() { 
-            return self.$footnote.hasClass('active')
-        }
+                var self = $(this),
+                    $ind = self, // indicator; semantically more appropriate
+                    $indWrapper = self,
+                    noteNum = fnCounter++,
+                    noteId = 'footnotify:fn'+noteNum;
 
-        this.showFootnote = function() {
-        	hideActiveFootnotes()
+                // Look for original note
+                var href = $ind.attr('href').replace(':','\\:'),
+                    $origNote = $(href);
+                
+                // Check if the immediate parent is part of the note, 
+                // by checking if the footnotes content refers back to it
+                if($ind.parent().hasClass('note')) $indWrapper = $ind.parent();
+                try {
+                    var parentId = $ind.parent().attr('id').replace(':','\\:'),
+                        reverseRef = $origNote.find('[href="#'+parentId+'"]');
+                    if(reverseRef.length > 0) {
+                        reverseRef.remove();
+                        $indWrapper = self.parent();
+                    }
+                } catch(e) {}
 
-        	self.$footnote.addClass('active')
-            clearTimeout(self.$footnote.data('timeout'))
-            self.$footnote.data('timeout', setTimeout(function() {
-                self.$footnote.addClass('visible')
-            }, 10))
+                // Update indicator wrapper
+                $indWrapper = $indWrapper
+                    .attr('id', '')
+                    .addClass(indWrapperClass);
 
-            this.positionFootnote()
-        }
+                // Update indicator 
+                $ind.attr('href', '#' + noteId)
+                    .addClass(indClass)
+                    .attr('data-note', noteNum)
+                    .attr('rel', 'note')
+                    .on('click', function(e) {
+                        e.preventDefault();
+                        if(!self.isActive()) {
+                            self.showNote();
+                        } else {
+                            self.hideNote();
+                        }
+                    });
 
-        this.hideFootnote = function() {
-			self.$footnote.removeClass('visible')
-            self.$footnote.data('timeout', setTimeout(function() {
-                self.$footnote.removeClass('active')
-            }, 300))
-        }
+                if(!isNaN(parseInt($ind.html()))) {
+                    $ind.html(indLabel++)
+                }
 
-        this.positionFootnote = function() {
-        	// Insert two probes around the ref to determine the
-            // right position of the tooltip
-            var $el = (this.parent().hasClass('footnote')) ? this.parent() : this;
-            var $beginProbe = $('<i>').insertBefore($el);
-            var beginPos = $beginProbe.position();
-            var $endProbe = $('<i>').insertAfter($el);
-            var endPos = $endProbe.position();
-            $endProbe.remove();
-            $beginProbe.remove();
+                // Create note and remove old note
+                var $note = $('<aside />')
+                    .attr('id', noteId)
+                    .addClass(noteClass)
+                    .attr('data-note', noteNum)
+                    .append(
+                        $('<div class="tip" />'),
+                        $('<div class="content" />')
+                           .html($origNote.html()))
+                    .insertAfter($indWrapper);
 
-            // Different reference positions for references spanning multiple lines
-            if ((endPos.top - beginPos.top > 10) && beginPos.top >= 0) {
-                refWidth = endPos.left
-                refLeft = 0;
+                $origNote.remove();
+
+                /////////////////////////////////////////////////
+
+                self.isActive = function() { 
+                    return $note.hasClass('active')
+                }
+
+                self.showNote = function() {
+                    hideActiveNotes()
+
+                    $note.addClass('active')
+                    clearTimeout($note.data('timeout'))
+                    $note.data('timeout', setTimeout(function() {
+                        $note.addClass('visible')
+                    }, 10))
+
+                    this.positionNote()
+                }
+
+                self.hideNote = function() {
+                    $note.removeClass('visible')
+                    $note.data('timeout', setTimeout(function() {
+                        $note.removeClass('active')
+                    }, 300))
+                }
+
+                self.positionNote = function() {
+                    // Insert two probes around the ref to determine the
+                    // right position of the tooltip
+                    // var $el = (this.parent().hasClass('footnote')) ? this.parent() : this;
+                    var $beginProbe = $('<i>').insertBefore($indWrapper);
+                    var beginPos = $beginProbe.position();
+                    var $endProbe = $('<i>').insertAfter($indWrapper);
+                    var endPos = $endProbe.position();
+                    $endProbe.remove();
+                    $beginProbe.remove();
+
+                    // Different reference positions for references spanning multiple lines
+                    if ((endPos.top - beginPos.top > 10) && beginPos.top >= 0) {
+                        refWidth = endPos.left
+                        refLeft = 0;
+                    } else {
+                        refWidth = self.width()
+                        refLeft = beginPos.left
+                    }
+
+                    // Position content of tooltip
+                    var totalWidth = $(outerContainer).width(),
+                        contentWidth = $note.width();
+                    if (refLeft > totalWidth - contentWidth / 2) {
+                        // Position all the way to the right
+                        targetLeft = totalWidth - contentWidth
+                    } else {
+                        // Center under reference
+                        targetLeft = refLeft - (contentWidth - refWidth) / 2
+                        targetLeft = Math.max(0, targetLeft)
+                    }
+                    $note.css({ left: targetLeft })
+
+                    // position tip
+                    var $tip = $note.find('.tip'),
+                        refCenter = refLeft + refWidth / 2,
+                        targetCenter = targetLeft + contentWidth / 2;
+                    if (refCenter != targetCenter) {
+                        $tip.css('left', refCenter - targetLeft);
+                    }
+                }
+                
+                /////////////////////////////////////////////////
+
+                return self;
             } else {
-                refWidth = self.width()
-                refLeft = beginPos.left
+                return this;
             }
-
-            // Position content of tooltip
-            var totalWidth = $(outerContainer).width(),
-                contentWidth = self.$footnote.width();
-            if (refLeft > totalWidth - contentWidth / 2) {
-                // Position all the way to the right
-                targetLeft = totalWidth - contentWidth
-            } else {
-                // Center under reference
-                targetLeft = refLeft - (contentWidth - refWidth) / 2
-                targetLeft = Math.max(0, targetLeft)
-            }
-            self.$footnote.css({ left: targetLeft })
-
-            // position tip
-            var $tip = self.$footnote.find('.tip'),
-                refCenter = refLeft + refWidth / 2,
-                targetCenter = targetLeft + contentWidth / 2;
-            if (refCenter != targetCenter) {
-                $tip.css('left', refCenter - targetLeft);
-            }
-        }
-
-        ///////////////////////////////////
-        
-        this.$footnote = this.findFootnote()
-
-        // Click handler
-        this.on('click', function(e) {
-        	e.preventDefault();
-        	if(!self.isActive()) {
-        		self.showFootnote();
-        	} else {
-        		self.hideFootnote();
-        	}
-        });
-
-        return this;
+        })
     }
 })(jQuery);
 
@@ -659,14 +709,15 @@ var BibCite = function(bibfile, options) {
         },
         async: false // to be improved!
     });
+    return this;
 }
 
 BibCite.prototype.replace = function() {
     for(key in this.bibliography) {
         this.replaceCitation(this.bibliography[key])
     }
-
-    this.updateTooltips()
+    this.footnotify();
+    return this;
 }
 
 BibCite.prototype.replaceCitation = function(citation) {
@@ -705,7 +756,7 @@ BibCite.prototype.replaceCitation = function(citation) {
         // Determine citation mode
         if(type == '(') { mode = 'p' }
         else if(type == '^') { mode = 'foot'; options.includeFootnote=true } 
-        else if(type == '*') { mode = 'full' }
+        else if(type == '*') { mode = 'full'; options.includeFootnote=false }
         else if(type == '!') { mode = 'no' }
 
         // Get citation html
@@ -805,10 +856,9 @@ BibCite.prototype.nocite = function(citation, options) {
     citation.cite(false);
 }
 
-BibCite.prototype.updateTooltips = function() {
-    $("a[rel='footnote']").map(function(i, el) {
-        $(el).footnotify();
-    });
+BibCite.prototype.footnotify = function() {
+    $('a[rel="note"], a[href^="#fn"], a[class="footnote"]').footnotify();
+    return this
 }
 
 BibCite.prototype.references = function(container) {

@@ -7,7 +7,7 @@ module.exports = function(grunt) {
 				sourceMap: true,
 			},
 			dist: {
-				src: ['src/parse-bibtex.js', 'src/citation.js', 'src/footnote.js', 'src/bibcite.js'],
+				src: ['src/parse-bibtex.js', 'src/citation-style.js', 'src/footnotify.js', 'src/bibcite.js'],
 				dest: 'dist/bibcite.js',
 			},
 		},
@@ -18,7 +18,12 @@ module.exports = function(grunt) {
 			},
 			my_target: {
 				files: {
-					'dist/bibcite.min.js': ['src/parse-bibtex.js', 'src/citation.js', 'src/footnote.js', 'src/bibcite.js']
+					'dist/bibcite.min.js': [
+						'src/parse-bibtex.js', 
+						'src/footnotify.js', 
+						'src/bibcite.js',
+						'src/citation-style.js'
+					]
 				}
 			}
 		},
