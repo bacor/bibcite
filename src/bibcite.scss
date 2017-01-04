@@ -35,7 +35,7 @@ $topSpacing: 5px;
 		position: absolute;
 		left: 50%;
 		top: $topSpacing;
-		margin-left: $tipSize/2;
+		margin-left: -$tipSize/2;
 		transform: rotate(45deg);
 		width: $tipSize;
 		height: $tipSize;
@@ -48,7 +48,3 @@ p,
 li {
 	position: relative;
 }
-
-// a[rel=footnote] {
-// 	border-color: $yellow;
-// }

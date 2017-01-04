@@ -533,9 +533,10 @@ CitationStyle.prototype.fullcite = function(citation, options) {
         this.positionFootnote = function() {
         	// Insert two probes around the ref to determine the
             // right position of the tooltip
-            var $beginProbe = $('<i>').insertBefore(self);
+            var $el = (this.parent().hasClass('footnote')) ? this.parent() : this;
+            var $beginProbe = $('<i>').insertBefore($el);
             var beginPos = $beginProbe.position();
-            var $endProbe = $('<i>').insertAfter(self);
+            var $endProbe = $('<i>').insertAfter($el);
             var endPos = $endProbe.position();
             $endProbe.remove();
             $beginProbe.remove();
@@ -544,12 +545,12 @@ CitationStyle.prototype.fullcite = function(citation, options) {
             if ((endPos.top - beginPos.top > 10) && beginPos.top >= 0) {
                 refWidth = endPos.left
                 refLeft = 0;
-                refTop = beginPos.top + self.height()
             } else {
                 refWidth = self.width()
                 refLeft = beginPos.left
-                refTop = endPos.top + self.height()
             }
+
+            console.log(refLeft, refWidth)
 
             // Position content of tooltip
             var totalWidth = $(outerContainer).width(),
@@ -562,7 +563,7 @@ CitationStyle.prototype.fullcite = function(citation, options) {
                 targetLeft = refLeft - (contentWidth - refWidth) / 2
                 targetLeft = Math.max(0, targetLeft)
             }
-            self.$footnote.css({ left: targetLeft, top: refTop })
+            self.$footnote.css({ left: targetLeft })
 
             // position tip
             var $tip = self.$footnote.find('.tip'),
