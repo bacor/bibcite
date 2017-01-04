@@ -263,9 +263,78 @@ function doParse(input) {
 }
 
 // module.exports = doParse;
-var CitationStyle = function() {
-	if (!(this instanceof CitationStyle)) return new CitationStyle();
+var CitationStyle = function(options) {
+	if (!(this instanceof CitationStyle)) return new CitationStyle(options);
 	this.footnote = 0;
+
+	this.options = _.defaults(options || {}, {
+		before: '',
+		after: '',
+		includeFootnote: false,
+		plain: true,
+		showAllAuthorsEvery: 3,
+		footnoteIdTemplate: 'bibcite-<%= footnoteNo %>'
+	})
+	this.options.footnoteIdTemplate = _.template(this.options.footnoteIdTemplate)
+
+	// Internal options
+	this.options._export = true
+	this.options._triggerCite = true
+
+	// Allowed BibTeX fields; from https://en.wikipedia.org/wiki/BibTeX#Field_types
+	var fields = 'address annote author booktitle chapter crossref '
+		+ 'edition editor howpublished institution journal key month note '
+		+ 'number organization pages publisher school series title type '
+		+ 'volume year';
+	this.fields = fields.split(' ');
+
+	// Valid entry types (unused)
+	var entryTypes = 'article book booklet conference inbook incollection '
+		+ 'inproceedings manual mastersthesis misc phdthesis proceedings '
+		+ 'techreport unpublished'
+	// this.entryTypes = fields.split(' ');
+}
+
+CitationStyle.prototype.templates = {
+  fullArticle: _.template('<%= author %> (<%= year %>). '
+                    +'<%= title %><%= title ? "." : "" %> '
+                    +'<em><%= journal %></em><%= journal ? "." : "" %> '
+                    +'<%= volume %><% if (number) { %><em>(<%= number %>)</em><% } %>'
+                    +'<%= (pages && volume ) ? ": " : "" %><%= pages %><%= pages ? "." : "" %>'),
+
+  fullBook: _.template('<%= author %> (<%= year %>). '
+                    +'<em><%= title %><%= title ? "." : "" %></em> '
+                    +'<%= address %><%= address ? ":" : "" %> '
+                    +'<%= publisher %>.'),
+
+  citep_plain: _.template('(<%= before %><%= before ? " " : "" %>'
+                    +'<%= author %>, <%= year %>'
+                    +'<%= after ? " " : "" %><%= after %>)'),
+  
+  citep: _.template('(<%= before %><%= before ? " " : "" %>'
+                    +'<a href="#<%= footnoteId %>" rel="footnote"><%= author %>, <%= year %></a>'
+                    +'<%= after ? " " : "" %><%= after %>)'),
+  
+  citet: _.template('<a href="#<%= footnoteId %>" rel="footnote"><%= author %> '
+                    +'(<%= before %><%= before ? " " : "" %><%= year %>'
+                    +'<%= after ? " " : "" %><%= after %>)</a>'),
+
+  citet_plain: _.template('<%= author %> '
+                    +'(<%= before %><%= before ? " " : "" %><%= year %>'
+                    +'<%= after ? " " : "" %><%= after %>)'),
+
+  footcite: _.template('<sup class="footnote">'
+						+'<a href="#<%= footnoteId %>" rel="footnote"><%= footnote %></a>'
+					  +'</sup>'),
+
+  footnote: _.template(  '<div id="<%= footnoteId %>" class="bibcite-footnote-wrapper">'
+  							+ '<div class="tip"></div>'
+  							+ '<div class="content">'
+	  							+ '<%= before ? "<p>" : ""%><%= before %><%= before ? "</p>" : ""%>'
+	  							+ '<p><%= content %></p>'
+	  							+ '<%= after ? "<p>" : ""%><%= after %><%= after ? "</p>" : ""%>'
+	  						+ '</div>'
+  						+'</div>') 
 }
 
 CitationStyle.prototype.formatAuthors = function(citation, all, initials) {
@@ -284,7 +353,7 @@ CitationStyle.prototype.formatAuthors = function(citation, all, initials) {
 		return authors[0]
 	} 
 
-	else if((authors.length <= 5 && all == true) || (authors.length == 2)) {
+	else if((authors.length <= 6 && all == true) || (authors.length == 2)) {
 		return authors.slice(0,authors.length-1).join(', ')
 	            + ' & ' + authors[authors.length-1];
 	} 
@@ -294,54 +363,33 @@ CitationStyle.prototype.formatAuthors = function(citation, all, initials) {
 	}
 }
 
-CitationStyle.prototype.templates = {
-  fullArticle: _.template('<%= author %> (<%= year %>). '
-                    +'<%= title %><%= title ? "." : "" %> '
-                    +'<em><%= journal %></em><%= journal ? "." : "" %> '
-                    +'<%= volume %><% if (number) { %><em>(<%= number %>)</em><% } %>'
-                    +'<%= (pages && volume ) ? ": " : "" %><%= pages %><%= pages ? "." : "" %>'),
-
-  fullArticle: _.template('<%= author %> (<%= year %>). '
-                    +'<em><%= title %><%= title ? "." : "" %></em> '
-                    +'<%= address %><%= address ? ":" : "" %> '
-                    +'<%= publisher %>.'),
-  
-  citep: _.template('(<%= before %><%= before ? " " : "" %>'
-                    +'<a href="#<%= footnoteId %>" rel="footnote"><%= author %>, <%= year %></a>'
-                    +'<%= after ? " " : "" %><%= after %>)'),
-  
-  citet: _.template('<a href="#<%= footnoteId %>" rel="footnote"><%= author %> '
-                    +'(<%= before %><%= before ? " " : "" %><%= year %>'
-                    +'<%= after ? " " : "" %><%= after %>)</a>')
-}
-
 CitationStyle.prototype.nextFn = function() {
 	this.footnote++;
 	return this.footnote;
 }
 
 CitationStyle.prototype.export = function(citation, context) {
-	var properties = ['author', 'year', 'title', 'journal', 'volume', 
-		'number', 'pages', 'address', 'publisher'];
 	var obj = {}
-	for(i in properties) {
-		var prop = properties[i];
+	for(i in this.fields) {
+		var prop = this.fields[i];
 		switch(prop) {
 
 			case 'author':
 				switch(context) {
 					case 'reference':
-						val = this.formatAuthors(citation, true, false);
+						val = this.formatAuthors(citation, true, true);
 						break;
 					case 'inline':
-						val = this.formatAuthors(citation, false, false);
+						// Periodially show all authors 
+						var allAuthors = citation.get('count') % this.options.showAllAuthorsEvery == 0
+						val = this.formatAuthors(citation, allAuthors, false);
 						break;
 				}
 				break;
 
 			case 'title':
 				var title = citation.get('title');
-				val = title.slice(1, title.length - 2);
+				val = title.slice(1, title.length - 1);
 				break;
 
 			default:
@@ -350,142 +398,387 @@ CitationStyle.prototype.export = function(citation, context) {
 		obj[prop] = val || '';
 	}
 
-	obj.id = citation.id;
+	obj.key = citation.get('key');
 	obj.footnote = this.nextFn()
-	obj.footnoteId = 'bibcite-' + obj.footnote
+	obj.footnoteId = this.options.footnoteIdTemplate({footnoteNo: obj.footnote })
 
 	return obj
 }
 
-CitationStyle.prototype.render = function(template, context, citation, before, after) {
-	var obj = this.export(citation, context)
-	obj.before = before;
-	obj.after = after;
-	return this.templates[template](obj)
-}
+CitationStyle.prototype.render = function(template, citation, options) {
+	var options = _.defaults(options || {}, this.options),
+		obj = options;
+	
+	// Export the citation into obj (the condition prevents superfluous exports)
+	if(options._export) obj = _(this.export(citation, options._context)).defaults(options);
 
-CitationStyle.prototype.citep = function(citation, before, after) {
-	return this.render('citep', 'inline', citation, before, after)
-}
+	// Trigger cite in citation object to e.g. update counter
+	if(options._triggerCite) citation.cite();
+ 	
+ 	if(options.includeFootnote) options.plain = false;
 
-CitationStyle.prototype.citet = function(citation, before, after) {
-	return this.render('citet', 'inline', citation, before, after)
-}
+ 	if(options.plain && (template + '_plain' in this.templates)) 
+ 		template = template + '_plain';
 
-CitationStyle.prototype.reference = function(citation, before, after) {
-	switch(citation.get('entryType')) {
-		case 'BOOK':
-			return this.render('fullBook', 'reference', citation, before, after);
-		default:
-			return this.render('fullArticle', 'reference', citation, before, after);
+	// Render citation template
+	var citationHtml = this.templates[template](obj);
+
+	if(options._context != 'footnote') {
+		options.before = '';
+		options.after = '';
+	}
+
+	// Optionally (but by default) render footnote template
+	if( options.includeFootnote) {
+
+		// Pass object and don't export + cite again
+		var opts =  _.extend(obj, { includeFootnote: false, _export: false, _triggerCite: false })
+		var content = this.fullcite(citation, opts)
+		var footnoteHtml = this.templates.footnote(_(opts).extend({ content: content }))
+		return {
+			citation: citationHtml,
+			footnote: footnoteHtml
+		}
+
+	} else {
+		return citationHtml;
 	}
 }
 
-// var fnSelector = 'div.footnotes ol'
-// var fnCounter = 0;
-// CitationStyle.prototype.reference = function(citation, before, after) {
-// 	// var fn = this.nextFn()
-// 	// var id = 'footcite-' + fn
-// 	// var ref = '<sup class="footnote"><a href="#'+id+'" rel="footnote">' + fn +'</a></sup>'
-// 	// return ref + fullReference(id, citation, before, after)
-// 	// 
-// 	// 
-// 	return templates.fullArticle({ 
-// 		authors: formatAuthors(citation, true, false),
-// 		year: citation['YEAR'],
-// 		title: citation['TITLE'].slice(1, citation['TITLE'].length-2),
-// 		journal: citation['JOURNAL'],
-// 		volume: citation['VOLUME'],
-// 		number: citation['NUMBER'],
-// 		pages: citation['PAGES'].replace('--','&ndash;')
-// 	})
-// }
+CitationStyle.prototype.citep = function(citation, options) {
+	options = _(options).defaults({ _context: 'inline' })
+	return this.render('citep', citation, options)
+}
 
-// var citep = function(citation, before, after) {
-//   var count = referenceCount(citation);
-//   fnCounter++;
-//   var id = 'footcite-'+fnCounter
-//   var content = templates.citep({ 
-//     authors: formatAuthors(citation, count % 5 == 1, false),
-//     year: citation['YEAR'],
-//     count: count,
-//     id: id,
-//     before: before,
-//     after: after
-//   })
-//   return content + fullReference(id, citation)
-// }
+CitationStyle.prototype.citet = function(citation, options) {
+	options = _(options).defaults({ _context: 'inline' })
+	return this.render('citet', citation, options)
+}
 
-// var citet = function(citation, before, after) {
-//   var count = referenceCount(citation);
-//   fnCounter++;
-//   var id = 'footcite-'+fnCounter
-//   var content = templates.citet({ 
-//     authors: formatAuthors(citation, count % 5 == 1, false),
-//     year: citation['YEAR'],
-//     count: count,
-//     id: id,
-//     before: before,
-//     after: after
-//   })
-//   return content + fullReference(id, citation)
-// }
+CitationStyle.prototype.footcite = function(citation, options) {
+	options = _(options).defaults({ _context: 'footnote' })
+	return this.render('footcite', citation, options)
+}
 
-// var footcite = function(citation, before, after) {
-//   fnCounter ++;
-//   var id = 'footcite-' + fnCounter
-//   var ref = '<sup class="footnote"><a href="#'+id+'" rel="footnote">' + fnCounter +'</a></sup>'
-//   return ref + fullReference(id, citation, before, after)
-// }
-
-// var fullcite = function(citation, before, after) {
-//   return templates.fullArticle({ 
-//     authors: formatAuthors(citation, true, false),
-//     year: citation['YEAR'],
-//     title: citation['TITLE'].slice(1, citation['TITLE'].length-2),
-//     journal: citation['JOURNAL'],
-//     volume: citation['VOLUME'],
-//     number: citation['NUMBER'],
-//     pages: citation['PAGES'].replace('--','&ndash;')
-//   }) 
-// };
+CitationStyle.prototype.fullcite = function(citation, options) {
+	options = _.defaults(options || {}, { includeFootnote: false, _context: 'reference' })
+	switch(citation.get('entryType')) {
+		case 'BOOK':
+			return this.render('fullBook', citation, options);
+		default:
+			return this.render('fullArticle', citation, options);
+	}
+};
 ;
-var BibCite = function(bibfile, settings) {
-    if (!(this instanceof BibCite)) return new BibCite(settings);
 
-    this.settings = _.defaults(settings, {
-        bibfile: bibfile
+var textohtml_map = {
+    "\\\"u": "&uuml;",
+    "\\\"a": "&auml;",
+    "\\\"o": "&ouml;",
+    "\\'e": "&eacute;",
+    "\\'a": "&aacute;",
+    "\\\"U": "&Uuml;",
+    "\\\"A": "&Auml;",
+    "\\\"O": "&Ouml;",
+    "\\'E": "&Eacute;",
+    "\\'A": "&Aacute;",
+    "\\\"{u}": "&uuml;",
+    "\\\"{a}": "&auml;",
+    "\\\"{o}": "&ouml;",
+    "\\'{e}": "&eacute;",
+    "\\'{a}": "&aacute;",
+    "\\\"{U}": "&Uuml;",
+    "\\\"{A}": "&Auml;",
+    "\\\"{O}": "&Ouml;",
+    "\\'{E}": "&Eacute;",
+    "\\'{A}": "&Aacute;",
+    "\\&": '&amp;',
+    "--": "&ndash;"
+};
+
+function tex2html(tex) {
+    for (var key in textohtml_map) {
+        if (textohtml_map.hasOwnProperty(key)) {
+            tex = tex.replace("{" + key + "}", textohtml_map[key]);
+            tex = tex.replace(key, textohtml_map[key]);
+        };
+    };
+    return tex;
+}
+
+var BibCite = function(bibfile, options) {
+    if (!(this instanceof BibCite)) return new BibCite(options);
+
+    this.options = _.defaults(options || {}, {
+        bibfile: bibfile,
+        defaultMode: 't',
+        selector: 'p, li',
+        includeFootnote: true
     })
-
-    this.style = new CitationStyle()
+    this.style = new CitationStyle(this.options)
 
     this.bibliography = {}
     var self = this;
-    $.get(bibfile, function(bibtext) {
-        var bibs = doParse(bibtext);
-        for (id in bibs) {
-            if (id == '@comments') continue;
-            var citation = new Citation(id, bibs[id])
-            self.bibliography[id] = citation
-            console.log(self.style.citep(citation))
-            console.log(self.style.citet(citation))
-            console.log(self.style.reference(citation))
+    $.ajax({
+        url: bibfile,
+        success: function(bibtext) {
+            var bibs = doParse(bibtext);
+            for (key in bibs) {
+                if (key == '@comments') continue;
+                var citation = new Citation(key, bibs[key])
+                self.bibliography[key.toUpperCase()] = citation
+            }
+        },
+        async: false // to be improved!
+    });
+    // console.log('demo', this.cite('Descartes2006'))
+    // console.log('demo', this.cite({}))
+    // console.log('demo', this.cite('Descartes20061'))
+}
+
+BibCite.prototype.replace = function() {
+    for(key in this.bibliography) {
+        this.replaceCitation(this.bibliography[key])
+    }
+
+    this.updateTooltips()
+}
+
+BibCite.prototype.replaceCitation = function(citation) {
+    citation = this.get(citation);
+
+    // Matches
+    // @key --> normal inline citation, e.g. Author1, Author2 (2015)
+    // @(key) --> parenthisized citation, e.g. (Author1, Author2, 2015)
+    // @^key --> footnote citation
+    // @@key --> full citation
+    var expr = new RegExp('@(.)?' + citation.get('key'), 'i')
+    var matches = $(this.options.selector).filter(function() {
+      return expr.test($(this).text())
+    })
+
+    var self = this;
+    var expr = new RegExp('(@{1,2})(.)?' + citation.get('key') + '\\)?((\\{[^\\{]*\\})*)', 'gi')
+    console.log(expr, matches)
+    $.each(matches, function() {
+      var html = $(this).html();
+      var newHtml = html.replace(expr, function(match, at, type, beforeAfter,C,D,E){
+        console.log(match)
+        var type = '' || type, 
+            mode = self.options.defaultMode,
+            options = {};
+
+        // Plain or with footnotes?
+        var includeFootnote = at.length == 2;
+        options.includeFootnote  = includeFootnote ? true : false;
+
+        // Extract comments before or after
+        if(beforeAfter) {
+          beforeAfter = beforeAfter.slice(1, beforeAfter.length-1).split('}{')
+          options.before = beforeAfter[0]
+          options.after = beforeAfter[1] || ''
         }
+
+        // Determine citation mode
+        if(type == '(') { mode = 'p' }
+        else if(type == '^') { mode = 'foot'; options.includeFootnote=true } 
+        else if(type == '*') { mode = 'full' }
+
+        // Get citation html
+        var html = self.cite(citation, mode, options)
+
+        if(typeof(html) == 'object') {
+            return html.citation + html.footnote
+        } else {
+            return html
+        }
+      })
+
+      // Update paragraph html
+      $(this).html(tex2html(newHtml))
     });
 }
 
-BibCite.prototype.updateCitation = function(citation) {
+BibCite.prototype.get = function(key){
+    if(_.isString(key)) {
+        if(!(key in this.bibliography)){
+            console.warn('Citation key not found')
+            return false;
+        }
+        return this.bibliography[key.toUpperCase()]    
+    }
+
+    else if(Citation.prototype.isPrototypeOf(key)) {
+        return key
+    } 
+
+    else {
+        throw('Error: Bibcite.get only accepts strings or citation elements')
+    }
+}
+
+// if first argument is a string
+// cite(id) should cite in text
+// cite(id, 't') should cite in text
+// cite(id, 'p') should cite in parentheses
+// cite(id, 'full') should cite in full
+// 
+// if first argument is a Citation object
+// cite(citation, style, options)
+BibCite.prototype.cite = function(citation, mode, options) {
+    
+    // Get citation object
+    if(_.isString(citation)) {
+        citation = this.get(citation);
+        if( _.isUndefined(citation)) 
+            throw ('Error: Citation key not found');
+    }
+    if(!Citation.prototype.isPrototypeOf(citation)) 
+        throw ('Error: citation should have Citation as a prototype');
+
+    // Using default style with objects
+    if(_.isObject(mode)) {
+        options = mode;
+        mode = this.options.defaultMode;
+    }
+
+    // Determine mode to cite
+    var citeFns = { 't': 'citet', 'p': 'citep', 'full': 'fullcite', 'foot': 'footcite' }
+    var mode = mode || this.options.defaultMode;
+    if(!(mode in citeFns)) {
+        console.warn('Warning: invalid mode argument: expecting "t", "p", or "full", but got "' + mode + '". Assuming default.')
+        mode = this.options.defaultMode;
+    }
+    var citeFn = citeFns[mode]
+
+    // Cite!
+    return this.style[citeFn].apply(this.style, [citation, options])
+}
+
+BibCite.prototype.citep = function(citation, options) { 
+    return this.cite(citation, 'p', options) 
+}
+
+BibCite.prototype.citet = function(citation, options) { 
+    return this.cite(citation, 't', options) 
+}
+
+BibCite.prototype.fullcite = function(citation, options) { 
+    return this.cite(citation, 'full', options) 
+}
+
+BibCite.prototype.footcite = function(citation, options) { 
+    return this.cite(citation, 'foot', options) 
+}
+
+BibCite.prototype.updateTooltips = function() {
+    // To do: make separate prototype?
+
+    $("a[rel='footnote'], a.footnote").map(function(i, el) {
+        var $ref = $(el)
+        var $content = $($ref.attr('href'))
+
+        $ref.on('click', function(e) {
+            e.preventDefault()
+            var href = $ref.attr('href')
+            var $content = $(href)
+            var active = $content.hasClass('active')
+
+            if (!active) {
+                $('.bibcite-footnote-wrapper.active').each(function() {
+                    var $this = $(this);
+                    $this.removeClass('visible')
+                    $this.data('timeout', setTimeout(function() {
+                        $this.removeClass('active')
+                    }, 300))
+                })
+
+                $content.addClass('active')
+                clearTimeout($content.data('timeout'))
+                $content.data('timeout', setTimeout(function() {
+                    $content.addClass('visible')
+                }, 10))
+
+                // Insert two probes around the ref to determine the
+                // right position of the tooltip
+                var $beginProbe = $('<i>').insertBefore($ref).addClass('probe');
+                var beginPos = $beginProbe.position();
+                var $endProbe = $('<i>').insertAfter($ref).addClass('probe');
+                var endPos = $endProbe.position();
+                $endProbe.remove();
+                $beginProbe.remove();
+
+                // Different reference positions for references spanning multiple lines
+                if ((endPos.top - beginPos.top > 10) && beginPos.top >= 0) {
+                    refWidth = endPos.left
+                    refLeft = 0;
+                    refTop = beginPos.top + $ref.height()
+                } else {
+                    refWidth = $ref.width()
+                    refLeft = beginPos.left
+                    refTop = endPos.top + $ref.height()
+                }
+
+                // Position content of tooltip
+                var totalWidth = $('main').width(),
+                    contentWidth = $content.width();
+                if (refLeft > totalWidth - contentWidth / 2) {
+                    // Position all the way to the right
+                    targetLeft = totalWidth - contentWidth
+                } else {
+                    // Center under reference
+                    targetLeft = refLeft - (contentWidth - refWidth) / 2
+                    targetLeft = Math.max(0, targetLeft)
+                }
+                $content.css({ left: targetLeft, top: refTop })
+
+                // position tip
+                var $tip = $content.find('.tip'),
+                    refCenter = refLeft + refWidth / 2,
+                    targetCenter = targetLeft + contentWidth / 2;
+                if (refCenter != targetCenter) {
+                    $tip.css('left', refCenter - targetLeft)
+                }
+            } else {
+                $content.removeClass('visible')
+                $content.data('timeout', setTimeout(function() {
+                    $content.removeClass('active')
+                }, 300))
+            }
+        })
+    })
 
 }
 
+BibCite.prototype.references = function(container) {
+    var references = _.filter(this.bibliography, function(citation) {
+        return citation.get('count') > 0
+    })
 
-var Citation = function(id, bib) {
+    var $list = $('<ul class="references"></ul>')
+    _.each(references, function(citation) {
+        var html = tex2html(this.fullcite(citation))
+        var $item = $('<li></li>').html(html)
+        $item.appendTo($list);
+    }.bind(this))
+
+    if(container) {
+        $list.appendTo($(container))
+    } else {
+        return $list;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////
+
+
+var Citation = function(key, bib) {
     if (!(this instanceof Citation)) return new Citation(citation_id, citation);
 
-    this.id = id
+    this.key = key
     this.bib = bib
+    this.count = 0 // number of citations
     this.parseAuthor();
-
 }
 
 Citation.prototype.get = function(property) {
@@ -517,7 +810,17 @@ Citation.prototype.parseAuthor = function() {
             obj.initials.push(name[0])
         })
 
+        // Make sure initials start with a capital
+        obj.initials = _.map(obj.initials, function(i){
+            if(_.isUndefined(i)) return '';
+            return i.charAt(0).toUpperCase() + i.slice(1);
+        })
+
         return obj
     })
+}
+
+Citation.prototype.cite = function() {
+    this.count++;
 }
 //# sourceMappingURL=bibcite.js.map

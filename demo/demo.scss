@@ -5,15 +5,10 @@
 $blue: #4183C4;
 $orange: #ed6751;
 $yellow: rgb(255, 240, 155);
-
-// Grays
-$bg: #fff;//#efeee9;//$yellow;
+$bg: #fff;
 $gray: #efeee9;
-$black: #000;
 $darkerGray: #222;
 $darkGray: rgb(50,50,30);
-// $gray: #666;
-$lightGray: #eee;
 $white: #fff;
 
 
@@ -67,17 +62,6 @@ h6 {
         line-height: 1.4;
     }
 }
-
-// .post h1 {
-//     font-size: 100px;
-//     line-height: 80px;
-//     color: $orange;
-//     margin-bottom: 1em;
-//     font-style: italic;
-//     a {
-//         color: inherit;
-//     }
-// }
 
 h2 {
     font-size: 40px;
@@ -170,14 +154,6 @@ img {
     max-width: 100%;
 }
 
-// code {
-//     font-family: $monospace;
-//     font-size: .8em;
-//     border-radius: 2px;
-//     border: 1px solid #fff;
-//     padding: .075em .3em .1em .3em;
-// }
-
 // Specify the color of the selection
 ::-moz-selection {
     background: $selected;
@@ -185,4 +161,28 @@ img {
 
 ::selection {
     background: $selected;
+}
+
+
+.bibcite-footnote-wrapper {
+    .content {
+        background-color: $yellow;
+        box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        font-size: .9em;
+        line-height: 1.2;
+
+        p {
+            margin-top: 0;
+            text-align: left;
+        }
+        
+        p:last-of-type {
+            margin-bottom: 0;
+        }
+
+    }
+}
+
+a[rel="footnote"] {
+    border-bottom-style: dotted;
 }

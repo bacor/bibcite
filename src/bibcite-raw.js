@@ -43,51 +43,51 @@ var referenceCount = function(citation) {
   return referenceCounts[id];
 }
 
-var parseAuthor = function(authorString) {
-  var authors = authorString.split(' and ');
-  return authors.map(function(author) {
-    var obj = { full: author }
-    var parts = author.split(', ')
-    obj.lastName = parts[0]
+// var parseAuthor = function(authorString) {
+//   var authors = authorString.split(' and ');
+//   return authors.map(function(author) {
+//     var obj = { full: author }
+//     var parts = author.split(', ')
+//     obj.lastName = parts[0]
 
-    parts = parts[1].split(' ')
-    obj.firstName = parts[0]
-    obj.middleNames = parts.slice(1)
+//     parts = parts[1].split(' ')
+//     obj.firstName = parts[0]
+//     obj.middleNames = parts.slice(1)
 
-    obj.initials = [obj.firstName[0]]
-    $(obj.middleNames).each(function(name) {
-      obj.initials.push(name[0])
-    })
+//     obj.initials = [obj.firstName[0]]
+//     $(obj.middleNames).each(function(name) {
+//       obj.initials.push(name[0])
+//     })
 
-    return obj
-  })
-}
+//     return obj
+//   })
+// }
 
-var formatAuthors = function(citation, all, initials) {
-  if(all == undefined) { all = false } // Show all authors
-  if(initials == undefined) { initials = false } // Show initials?
+// var formatAuthors = function(citation, all, initials) {
+//   if(all == undefined) { all = false } // Show all authors
+//   if(initials == undefined) { initials = false } // Show initials?
 
-  var authors = parseAuthor(citation['AUTHOR']).map(function(author) {
-    if(initials) {
-      return author.lastName + ', ' + author.initials.join('. ') + '.'
-    } else {
-      return author.lastName
-    }
-  });
+//   var authors = parseAuthor(citation['AUTHOR']).map(function(author) {
+//     if(initials) {
+//       return author.lastName + ', ' + author.initials.join('. ') + '.'
+//     } else {
+//       return author.lastName
+//     }
+//   });
   
-  if(authors.length == 1) {
-    return authors[0]
-  } 
+//   if(authors.length == 1) {
+//     return authors[0]
+//   } 
 
-  else if((authors.length <= 5 && all == true) || (authors.length == 2)) {
-    return authors.slice(0,authors.length-1).join(', ')
-                + ' & ' + authors[authors.length-1];
-  } 
+//   else if((authors.length <= 5 && all == true) || (authors.length == 2)) {
+//     return authors.slice(0,authors.length-1).join(', ')
+//                 + ' & ' + authors[authors.length-1];
+//   } 
 
-  else {
-    return authors[0] + ' et al.'
-  }
-}
+//   else {
+//     return authors[0] + ' et al.'
+//   }
+// }
 
 var templates = {
   fullArticle: _.template('<%= authors %> (<%= year %>). '
@@ -175,7 +175,7 @@ var updateReference = function(citation, citation_id) {
       return expr.test($(this).text())
   })
   
-  var expr = new RegExp('@(.)?' + citation_id + '\\)?(\\[.*\\])*', 'gi')
+  var expr = new RegExp('@{1,2}(.)?' + citation_id + '\\)?(\\[.*\\])*', 'gi')
   $.each(matches, function() {
       var html = $(this).html();
       var newHtml = html.replace(expr, function(match, type, beforeAfter){

@@ -1,14 +1,13 @@
 $tipSize: 15px;
 $topSpacing: 5px; 
-$yellow: '#ff0';
 
-.footnote-wrapper {
+.bibcite-footnote-wrapper {
 	display: none;
     position: absolute;
     z-index: 999;
     max-width: 60%;
     text-align: left;
-    // font-family: $sans;
+
     opacity: 0;
     transition: opacity 300ms ease-out, margin-top 250ms ease;
     margin-top: -10px;
@@ -26,10 +25,10 @@ $yellow: '#ff0';
 		position: relative;
 		top: $topSpacing + $tipSize/2;
 		z-index: 999;
-	    background-color: $yellow;
-	    padding: 20px;
+	    background-color: #fff;
+	    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+	    padding: .75em 1em;
 	    min-width: 200px;
-	    font-size: .8em;
 	}
 
 	.tip {
@@ -45,10 +44,11 @@ $yellow: '#ff0';
 	}
 }
 
-p {
+p,
+li {
 	position: relative;
 }
 
-a[rel=footnote] {
-	border-color: $yellow;
-}
+// a[rel=footnote] {
+// 	border-color: $yellow;
+// }

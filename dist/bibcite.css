@@ -1,4 +1,4 @@
-.footnote-wrapper {
+.bibcite-footnote-wrapper {
   display: none;
   position: absolute;
   z-index: 999;
@@ -7,20 +7,20 @@
   opacity: 0;
   transition: opacity 300ms ease-out, margin-top 250ms ease;
   margin-top: -10px; }
-  .footnote-wrapper.active {
+  .bibcite-footnote-wrapper.active {
     display: block; }
-  .footnote-wrapper.visible {
+  .bibcite-footnote-wrapper.visible {
     opacity: 1;
     margin-top: 0; }
-  .footnote-wrapper .content {
+  .bibcite-footnote-wrapper .content {
     position: relative;
     top: 12.5px;
     z-index: 999;
-    background-color: "#ff0";
-    padding: 20px;
-    min-width: 200px;
-    font-size: .8em; }
-  .footnote-wrapper .tip {
+    background-color: #fff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    padding: .75em 1em;
+    min-width: 200px; }
+  .bibcite-footnote-wrapper .tip {
     position: absolute;
     left: 50%;
     top: 5px;
@@ -31,10 +31,8 @@
     background-color: #000;
     z-index: 998; }
 
-p {
+p,
+li {
   position: relative; }
-
-a[rel=footnote] {
-  border-color: "#ff0"; }
 
 /*# sourceMappingURL=bibcite.css.map */

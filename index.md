@@ -25,9 +25,9 @@ sodales eget. @Descartes2006 fusce eget nunc lorem.
 
 Aenean semper sapien gravida blandit ullamcorper. Duis 
 pellentesque metus sit amet gravida posuere. Nullam 
-volutpat @^Descartes2016 malesuada erat, sed consectetur.
+volutpat @@^Descartes2006 malesuada erat, sed consectetur.
 
-@@Descartes2016
+@@Banerjee2015
 {% endhighlight %}
 
 ### Result
@@ -38,8 +38,23 @@ sodales eget. @Descartes2006 fusce eget nunc lorem.
 
 Aenean semper sapien gravida blandit ullamcorper. Duis 
 pellentesque metus sit amet gravida posuere. Nullam 
-volutpat @^Descartes2016 malesuada erat, sed consectetur.
+volutpat @@^Descartes2006 malesuada erat, sed consectetur.
 
-@@Descartes2016
+@@Banerjee2015
 
+### More examples
+- @Banerjee2015
+- @@Banerjee2015
+- @(Banerjee2015)
+- @@(Banerjee2015)
+- @@(Banerjee2015){}
+- @@(Banerjee2015){Before [this is a link?](example.com)}
+- @@(Banerjee2015){Before}{After}
+- @@(Banerjee2015){}{After}
+- @@(Banerjee2015){Before}{after} @@(Banerjee2015){before}
+- Footnotes are always interactive: @^Banerjee2015 @@^Banerjee2015
+- And you can include messages there: @^Banerjee2015{Look this is [a link](http://example.com)}{And an afterthough}
+- @@*Banerjee2015
 
+### References
+<div class="references-container"></div>
