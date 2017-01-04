@@ -278,6 +278,10 @@ BibCite.prototype.references = function(container) {
         return citation.get('count') > 0
     })
 
+    references = _.sortBy(references, function(citation){
+        return this.style.formatAuthors(citation, true, true)
+    }.bind(this))
+
     var $list = $('<ul class="references"></ul>')
     _.each(references, function(citation) {
         var html = tex2html(this.fullcite(citation))
