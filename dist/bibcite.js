@@ -435,7 +435,6 @@ CitationStyle.prototype.render = function(template, citation, options) {
 		// Pass object and don't export + cite again
 		var opts =  _.extend(obj, { includeFootnote: false, _export: false, _triggerCite: false })
 		var content = this.fullcite(citation, opts)
-		console.log(content)
 		var footnoteHtml = this.templates.footnote(_(opts).extend({ content: content }))
 		return {
 			citation: citationHtml,
@@ -473,7 +472,7 @@ CitationStyle.prototype.fullcite = function(citation, options) {
 };
 ;
 
-var textohtml_map = {
+var tex2html_map = {
     "\\\"u": "&uuml;",
     "\\\"a": "&auml;",
     "\\\"o": "&ouml;",
@@ -498,11 +497,16 @@ var textohtml_map = {
     "--": "&ndash;"
 };
 
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.replace(new RegExp(search, 'g'), replacement);
+};
+
 function tex2html(tex) {
-    for (var key in textohtml_map) {
-        if (textohtml_map.hasOwnProperty(key)) {
-            tex = tex.replace("{" + key + "}", textohtml_map[key]);
-            tex = tex.replace(key, textohtml_map[key]);
+    for (var key in tex2html_map) {
+        if (tex2html_map.hasOwnProperty(key)) {
+            tex = tex.replaceAll("{" + key + "}", tex2html_map[key]);
+            tex = tex.replaceAll(key, tex2html_map[key]);
         };
     };
     return tex;
@@ -755,7 +759,6 @@ BibCite.prototype.updateTooltips = function() {
             }
         })
     })
-
 }
 
 BibCite.prototype.references = function(container) {

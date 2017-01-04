@@ -1,5 +1,5 @@
 
-var textohtml_map = {
+var tex2html_map = {
     "\\\"u": "&uuml;",
     "\\\"a": "&auml;",
     "\\\"o": "&ouml;",
@@ -24,11 +24,16 @@ var textohtml_map = {
     "--": "&ndash;"
 };
 
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.replace(new RegExp(search, 'g'), replacement);
+};
+
 function tex2html(tex) {
-    for (var key in textohtml_map) {
-        if (textohtml_map.hasOwnProperty(key)) {
-            tex = tex.replace("{" + key + "}", textohtml_map[key]);
-            tex = tex.replace(key, textohtml_map[key]);
+    for (var key in tex2html_map) {
+        if (tex2html_map.hasOwnProperty(key)) {
+            tex = tex.replaceAll("{" + key + "}", tex2html_map[key]);
+            tex = tex.replaceAll(key, tex2html_map[key]);
         };
     };
     return tex;
@@ -281,7 +286,6 @@ BibCite.prototype.updateTooltips = function() {
             }
         })
     })
-
 }
 
 BibCite.prototype.references = function(container) {
