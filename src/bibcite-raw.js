@@ -175,7 +175,7 @@ var updateReference = function(citation, citation_id) {
       return expr.test($(this).text())
   })
   
-  var expr = new RegExp('@{1,2}(.)?' + citation_id + '\\)?(\\[.*\\])*', 'gi')
+  var expr = new RegExp('@(.)?' + citation_id + '\\)?(\\[.*\\])*', 'gi')
   $.each(matches, function() {
       var html = $(this).html();
       var newHtml = html.replace(expr, function(match, type, beforeAfter){

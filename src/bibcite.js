@@ -106,6 +106,7 @@ BibCite.prototype.replaceCitation = function(citation) {
         if(type == '(') { mode = 'p' }
         else if(type == '^') { mode = 'foot'; options.includeFootnote=true } 
         else if(type == '*') { mode = 'full' }
+        else if(type == '!') { mode = 'no' }
 
         // Get citation html
         var html = self.cite(citation, mode, options)
@@ -164,6 +165,12 @@ BibCite.prototype.cite = function(citation, mode, options) {
         options = mode;
         mode = this.options.defaultMode;
     }
+    
+    // No cite: no output
+    if(mode == 'no') {
+        this.nocite(citation);
+        return '';
+    }
 
     // Determine mode to cite
     var citeFns = { 't': 'citet', 'p': 'citep', 'full': 'fullcite', 'foot': 'footcite' }
@@ -192,6 +199,10 @@ BibCite.prototype.fullcite = function(citation, options) {
 
 BibCite.prototype.footcite = function(citation, options) { 
     return this.cite(citation, 'foot', options) 
+}
+
+BibCite.prototype.nocite = function(citation, options) {
+    citation.cite(false);
 }
 
 BibCite.prototype.updateTooltips = function() {
@@ -275,7 +286,7 @@ BibCite.prototype.updateTooltips = function() {
 
 BibCite.prototype.references = function(container) {
     var references = _.filter(this.bibliography, function(citation) {
-        return citation.get('count') > 0
+        return citation.isCited()
     })
 
     references = _.sortBy(references, function(citation){
@@ -305,6 +316,7 @@ var Citation = function(key, bib) {
     this.key = key
     this.bib = bib
     this.count = 0 // number of citations
+    this.cited = false;
     this.parseAuthor();
 }
 
@@ -347,6 +359,11 @@ Citation.prototype.parseAuthor = function() {
     })
 }
 
-Citation.prototype.cite = function() {
-    this.count++;
+Citation.prototype.cite = function(count) {
+    if(_.isUndefined(count)) count = true;
+    if(count) this.count++;
+    this.cited = true;
+}
+Citation.prototype.isCited = function() {
+    return this.cited
 }

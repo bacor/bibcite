@@ -688,4 +688,38 @@ img {
 a[rel="footnote"] {
   border-bottom-style: dotted; }
 
+.result, .bibliography, .ref-title {
+  background-color: #efeee9;
+  padding: 1em; }
+
+.ref-title {
+  margin: 0;
+  padding: 0 1em;
+  font-family: "Helvetica Neue";
+  font-weight: bold; }
+
+.result {
+  margin-bottom: 0; }
+
+.bibliography {
+  margin-top: 0;
+  padding-top: 0; }
+  .bibliography ul {
+    margin-top: 0; }
+
+th {
+  font-weight: bold;
+  text-align: left;
+  font-family: "Helvetica Neue";
+  font-size: .85em; }
+
+td, th {
+  padding: .2em .5em; }
+
+tr {
+  border-bottom: 1px solid #000; }
+
+code {
+  font-size: .85em; }
+
 /*# sourceMappingURL=demo.css.map */

@@ -186,3 +186,46 @@ img {
 a[rel="footnote"] {
     border-bottom-style: dotted;
 }
+
+.result, .bibliography, .ref-title {
+    background-color: $gray;
+    padding: 1em;
+}
+
+.ref-title { 
+    margin: 0; 
+    padding: 0 1em;
+    font-family: $sans;
+    font-weight: bold;
+}
+
+.result {
+    margin-bottom: 0;
+}
+
+.bibliography {
+    margin-top: 0;
+    padding-top: 0;
+
+    ul {
+        margin-top:0 
+    }
+}
+
+th {
+    font-weight: bold;
+    text-align: left;
+    font-family: $sans;
+    font-size: .85em;
+}
+td, th {
+    padding: .2em .5em;
+}
+tr {
+    border-bottom: 1px solid #000;
+}
+
+
+code {
+    font-size: .85em;
+}
