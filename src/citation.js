@@ -111,6 +111,7 @@ CitationStyle.prototype.export = function(citation, context) {
 
 			case 'author':
 				switch(context) {
+					case 'footnote':
 					case 'reference':
 						val = this.formatAuthors(citation, true, true);
 						break;
@@ -169,6 +170,7 @@ CitationStyle.prototype.render = function(template, citation, options) {
 		// Pass object and don't export + cite again
 		var opts =  _.extend(obj, { includeFootnote: false, _export: false, _triggerCite: false })
 		var content = this.fullcite(citation, opts)
+		console.log(content)
 		var footnoteHtml = this.templates.footnote(_(opts).extend({ content: content }))
 		return {
 			citation: citationHtml,
