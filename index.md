@@ -66,6 +66,14 @@ The citation syntax follows the general pattern **`[@ or @@][mode][citation key]
 * **`{[before]}`**. The text `[before]` is inserted before the citation
 * **`{[after]}`**. The text `[after]` is inserted after the citation. Note that `before` and `after` can contain HTML elements (or initially, markdown), as long as it contains no curly brackets.
 
+## Options
+The `BibCite` object takes various options. These are always passed along internally and you can overwrite them in, e.g. individual citations `MyBibCite.pcite(myCitation, myOptions)`. 
+
+- **`defaultMode`** The default citation mode; defaults to `"t"` (i.e. `citet`)
+- **`selector`** CSS selector for the elements in which to look for citations; defaults to `"p, li"`. 
+- **`before`** Default text shown before a citation, defaults to `""`.
+- **`after`** Default text shown after a citation, defaults to `""`.
+- ... 
 
 ## More examples
 - @Banerjee2015
