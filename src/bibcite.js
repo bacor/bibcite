@@ -211,81 +211,9 @@ BibCite.prototype.nocite = function(citation, options) {
 }
 
 BibCite.prototype.updateTooltips = function() {
-    // To do: make separate prototype?
-
-    $("a[rel='footnote'], a.footnote").map(function(i, el) {
-        var $ref = $(el)
-        var $content = $($ref.attr('href'))
-
-        $ref.on('click', function(e) {
-            e.preventDefault()
-            var href = $ref.attr('href')
-            var $content = $(href)
-            var active = $content.hasClass('active')
-
-            if (!active) {
-                $('.bibcite-footnote-wrapper.active').each(function() {
-                    var $this = $(this);
-                    $this.removeClass('visible')
-                    $this.data('timeout', setTimeout(function() {
-                        $this.removeClass('active')
-                    }, 300))
-                })
-
-                $content.addClass('active')
-                clearTimeout($content.data('timeout'))
-                $content.data('timeout', setTimeout(function() {
-                    $content.addClass('visible')
-                }, 10))
-
-                // Insert two probes around the ref to determine the
-                // right position of the tooltip
-                var $beginProbe = $('<i>').insertBefore($ref).addClass('probe');
-                var beginPos = $beginProbe.position();
-                var $endProbe = $('<i>').insertAfter($ref).addClass('probe');
-                var endPos = $endProbe.position();
-                $endProbe.remove();
-                $beginProbe.remove();
-
-                // Different reference positions for references spanning multiple lines
-                if ((endPos.top - beginPos.top > 10) && beginPos.top >= 0) {
-                    refWidth = endPos.left
-                    refLeft = 0;
-                    refTop = beginPos.top + $ref.height()
-                } else {
-                    refWidth = $ref.width()
-                    refLeft = beginPos.left
-                    refTop = endPos.top + $ref.height()
-                }
-
-                // Position content of tooltip
-                var totalWidth = $('main').width(),
-                    contentWidth = $content.width();
-                if (refLeft > totalWidth - contentWidth / 2) {
-                    // Position all the way to the right
-                    targetLeft = totalWidth - contentWidth
-                } else {
-                    // Center under reference
-                    targetLeft = refLeft - (contentWidth - refWidth) / 2
-                    targetLeft = Math.max(0, targetLeft)
-                }
-                $content.css({ left: targetLeft, top: refTop })
-
-                // position tip
-                var $tip = $content.find('.tip'),
-                    refCenter = refLeft + refWidth / 2,
-                    targetCenter = targetLeft + contentWidth / 2;
-                if (refCenter != targetCenter) {
-                    $tip.css('left', refCenter - targetLeft)
-                }
-            } else {
-                $content.removeClass('visible')
-                $content.data('timeout', setTimeout(function() {
-                    $content.removeClass('active')
-                }, 300))
-            }
-        })
-    })
+    $("a[rel='footnote']").map(function(i, el) {
+        $(el).footnotify();
+    });
 }
 
 BibCite.prototype.references = function(container) {
@@ -371,3 +299,4 @@ Citation.prototype.cite = function(count) {
 Citation.prototype.isCited = function() {
     return this.cited
 }
+
