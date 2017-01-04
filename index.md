@@ -3,7 +3,9 @@ layout: default
 ---
 ## BibCite
 
-BibCite let's you cite from your BibTeX files using a markdown-like syntax. It depends on jQuery and (still) on underscore.js.
+BibCite let's you cite from your BibTeX files using a markdown-like syntax. It depends on jQuery and underscore.js.
+
+Note: all this is still pretty experimental.
 
 ### JS
 Load the dependencies and you're good to go:
@@ -12,7 +14,8 @@ Load the dependencies and you're good to go:
 <script src="underscore-min.js"></script>
 <script src="bibcite.min.js"></script>
 <script>
-//..
+    B = new BibCite('path/to/my/bib/file.bib', { /* options */ })
+    B.replace();
 </script>
 {% endhighlight %}
 
@@ -41,6 +44,8 @@ pellentesque metus sit amet gravida posuere. Nullam
 volutpat @@^Descartes2006 malesuada erat, sed consectetur.
 
 @@Banerjee2015
+
+------
 
 ### More examples
 - @Banerjee2015
